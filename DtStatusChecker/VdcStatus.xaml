@@ -1,0 +1,39 @@
+﻿<UserControl x:Name="userControl" x:Class="DtStatusChecker.VdcStatus"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DtStatusChecker"
+             mc:Ignorable="d" Margin="5">
+    <Grid >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <!-- VDC info -->
+            <RowDefinition Height="Auto"/>
+            <!-- Progress Bar -->
+            <RowDefinition Height="30"/>
+            <!-- DT Status -->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Label x:Name="vdcLabel" Content="VDC:" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top"/>
+        <Label x:Name="vdcName" Content="{Binding VdcName, ElementName=userControl}" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" Grid.Column="1" Grid.ColumnSpan="2"/>
+        <Label x:Name="vdcIp" Content="{Binding VdcIp, ElementName=userControl}" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" Grid.Column="3" Grid.ColumnSpan="3"/>
+        <!-- This is a hack; for some reason Progress Bars don't fill grid cells as requested so wrap in stack panel of one. -->
+        <StackPanel Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="1" >
+            <ProgressBar x:Name="InitProgress" Margin="0" Height="30" Value="{Binding PercentInit, ElementName=userControl}" IsIndeterminate="True"/>
+        </StackPanel>
+        <Label x:Name="totalLabel" Content="Total:" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" Grid.Row="2" Grid.Column="0"/>
+        <Label x:Name="totalValue" Content="{Binding TotalDts, ElementName=userControl}" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" Grid.Row="2" Grid.Column="1"/>
+        <Label x:Name="unreadyLabel" Content="Unready:" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" Grid.Row="2" Grid.Column="2"/>
+        <Label x:Name="unreadyValue" Content="{Binding UnreadyDts, ElementName=userControl}" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" Grid.Row="2" Grid.Column="3"/>
+        <Label x:Name="unknownLabel" Content="Unknown:" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" Grid.Row="2" Grid.Column="4"/>
+        <Label x:Name="unknownValue" Content="{Binding UnknownDts, ElementName=userControl}" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" Grid.Row="2" Grid.Column="5"/>
+    </Grid>
+</UserControl>
