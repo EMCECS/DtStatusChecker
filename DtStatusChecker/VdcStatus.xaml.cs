@@ -96,7 +96,7 @@ namespace DtStatusChecker
 
         // Using a DependencyProperty as the backing store for PercentInit.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty PercentInitProperty =
-            DependencyProperty.Register("PercentInit", typeof(double), typeof(VdcStatus), new PropertyMetadata(50.0));
+            DependencyProperty.Register("PercentInit", typeof(double), typeof(VdcStatus), new PropertyMetadata(0.0));
 
 
 

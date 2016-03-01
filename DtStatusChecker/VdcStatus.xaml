@@ -29,6 +29,10 @@
         <StackPanel Grid.Column="0" Grid.ColumnSpan="6" Grid.Row="1" >
             <ProgressBar x:Name="InitProgress" Margin="0" Height="30" Value="{Binding PercentInit, ElementName=userControl}" IsIndeterminate="True"/>
         </StackPanel>
+        <StackPanel Grid.ColumnSpan="6" Grid.Row="1" HorizontalAlignment="Center" Orientation="Horizontal">
+            <Label x:Name="percentLabel" Margin="0" Padding ="0" Content="{Binding Value, ElementName=InitProgress, StringFormat=\{0:F0\}}" HorizontalAlignment="Right" VerticalAlignment="Center"  />
+            <Label x:Name="pct" Content="%" Margin="0" Padding="0" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        </StackPanel>
         <Label x:Name="totalLabel" Content="Total:" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" Grid.Row="2" Grid.Column="0"/>
         <Label x:Name="totalValue" Content="{Binding TotalDts, ElementName=userControl}" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" Grid.Row="2" Grid.Column="1"/>
         <Label x:Name="unreadyLabel" Content="Unready:" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Top" Grid.Row="2" Grid.Column="2"/>
