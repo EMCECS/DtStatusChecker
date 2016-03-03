@@ -47,12 +47,14 @@ namespace DtStatusChecker
         public int TotalDts
         {
             get { return (int)GetValue(TotalDtsProperty); }
-            set {
+            set
+            {
                 SetValue(TotalDtsProperty, value);
-                if(value == 0 && InitProgress != null)
+                if (value == 0 && InitProgress != null)
                 {
                     InitProgress.IsIndeterminate = true;
-                } else
+                }
+                else
                 {
                     InitProgress.IsIndeterminate = false;
                 }
@@ -123,13 +125,13 @@ namespace DtStatusChecker
             timer.Interval = new TimeSpan(0, 0, 1);
             timer.Tick += Timer_Tick;
             timer.Start();
-            
+
         }
 
         private async void Timer_Tick(object sender, EventArgs e)
         {
             // Check current state:
-            switch(currentStatus)
+            switch (currentStatus)
             {
                 case VdcState.RUNNING:
                     // Do a check
@@ -151,49 +153,60 @@ namespace DtStatusChecker
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
             byte[] result;
             byte[] buffer = new byte[4096];
-            using (var response = (HttpWebResponse)await request.GetResponseAsync()) try
+            try
             {
-                using(Stream responseStream = response.GetResponseStream())
+                using (var response = (HttpWebResponse)await request.GetResponseAsync())
                 {
-                    using(MemoryStream memoryStream = new MemoryStream())
+                    using (Stream responseStream = response.GetResponseStream())
                     {
-                        int count = 0;
-                        do
+                        using (MemoryStream memoryStream = new MemoryStream())
                         {
-                            count = responseStream.Read(buffer, 0, buffer.Length);
-                            memoryStream.Write(buffer, 0, count);
-                        } while (count != 0);
-                        result = memoryStream.ToArray();
+                            int count = 0;
+                            do
+                            {
+                                count = responseStream.Read(buffer, 0, buffer.Length);
+                                memoryStream.Write(buffer, 0, count);
+                            } while (count != 0);
+                            result = memoryStream.ToArray();
+                        }
                     }
-                }
 
-                if(response.StatusCode == HttpStatusCode.OK)
-                {
-                    // Parse XML
-                    XmlDocument doc = new XmlDocument();
-                    doc.Load(new MemoryStream(result));
-                    XmlNode node = doc.SelectSingleNode("//total_dt_num");
-                    int total = int.Parse(node.InnerText);
-                    node = doc.SelectSingleNode("//unready_dt_num");
-                    int unready = int.Parse(node.InnerText);
-                    node = doc.SelectSingleNode("//unknown_dt_num");
-                    int unknown = int.Parse(node.InnerText);
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        // Parse XML
+                        XmlDocument doc = new XmlDocument();
+                        doc.Load(new MemoryStream(result));
+                        XmlNode node = doc.SelectSingleNode("//total_dt_num");
+                        int total = int.Parse(node.InnerText);
+                        node = doc.SelectSingleNode("//unready_dt_num");
+                        int unready = int.Parse(node.InnerText);
+                        node = doc.SelectSingleNode("//unknown_dt_num");
+                        int unknown = int.Parse(node.InnerText);
 
                         // Dispatch onto UI thread.
-                        totalValue.Dispatcher.Invoke(DispatcherPriority.DataBind, new updateDelegate(update), total, unready, unknown); 
-                } else
-                {
-                    if(result != null)
+                        totalValue.Dispatcher.Invoke(DispatcherPriority.DataBind, new updateDelegate(update), total, unready, unknown);
+                    }
+                    else
                     {
-                        Debug.WriteLine(string.Format("HTTP request failed.  Status: {0} Message: {1}", response.StatusCode, Encoding.UTF8.GetString(result)));
+                        if (result != null)
+                        {
+                            Debug.WriteLine(string.Format("HTTP request failed.  Status: {0} Message: {1}", response.StatusCode, Encoding.UTF8.GetString(result)));
 
-                    } else
-                    {
-                        Debug.WriteLine(string.Format("HTTP request failed: {0} ", response.StatusCode));
+                        }
+                        else
+                        {
+                            Debug.WriteLine(string.Format("HTTP request failed: {0} ", response.StatusCode));
+                        }
                     }
                 }
-            } catch(WebException e) {
+            }
+            catch (WebException e)
+            {
                 Debug.WriteLine(string.Format("HTTP request failed: {0} ", e.Status));
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(string.Format("Getting VDC status failed: {0} ", e.ToString()));
             }
             currentStatus = VdcState.RUNNING;
         }
@@ -205,16 +218,17 @@ namespace DtStatusChecker
             TotalDts = total;
             UnreadyDts = unready;
             UnknownDts = unkown;
-            if(total <= 0)
+            if (total <= 0)
             {
                 InitProgress.IsIndeterminate = true;
-            } else
+            }
+            else
             {
                 int ready = total - unready - unkown;
                 double percent = ready * 100 / total;
                 InitProgress.IsIndeterminate = false;
                 PercentInit = percent;
-                
+
             }
         }
     }
